@@ -6,10 +6,7 @@ import time
 import sys
 import paho.mqtt.client as mqtt
 import json
-from phant import Phant
-import serial_openlock
 #import get_ip
-from upload_phant import upload_phant
 # below required by gpio
 import RPi.GPIO as GPIO            # import RPi.GPIO module  
 from time import sleep,gmtime,localtime,strftime
@@ -18,6 +15,8 @@ from time import sleep,gmtime,localtime,strftime
 with open('/home/pi/pyduino/credential/wwl1.json') as f:
     credential = json.load(f) #,object_pairs_hook=collections.OrderedDict)
 
+with open('/home/pi/pyduino/credential/wwl1_102.json') as f:
+    credential_102 = json.load(f) #,object_pairs_hook=collections.OrderedDict)
 #SDI_total = 20
 #gs = 'gs', cs = 'cs'
 #temp = 'temp', ec = 'ec', dp = 'dp'
@@ -32,7 +31,7 @@ with open('/home/pi/pyduino/credential/wwl1.json') as f:
 SUCTION_HEAT_TIME = str(6000) # milliseconds
 
 # Sleep interval in seconds between sensor readings
-SLEEP_TIME_SECONDS = 60 * 60 # seconds
+SLEEP_TIME_SECONDS = 60 #* 60 # seconds
 
 #SDI12_TOTAL         = [20, 5] #total sensors for each type
 #SDI12_SENSOR_TYPE   = ['gs', 'cs'] #types
@@ -46,58 +45,7 @@ SLEEP_TIME_SECONDS = 60 * 60 # seconds
 #TEMP_COUNT           = 16
 #
 
-field_name=['volt','dht22_rh','dht22_t',
-        'mo1_ec', 'mo2_ec', 'mo3_ec','mo4_ec','mo5_ec',
-        'mo6_ec','mo7_ec','mo8_ec','mo9_ec',
-        'mo10_ec','mo11_ec',
-        'mo12_ec','mo13_ec','mo14_ec',
-        'mo1_temp', 'mo2_temp', 'mo3_temp','mo4_temp','mo5_temp',
-        'mo6_temp','mo7_temp','mo8_temp','mo9_temp',
-        'mo10_temp','mo11_temp',
-        'mo12_temp','mo13_temp','mo14_temp',
-        'mo1_dp', 'mo2_dp', 'mo3_dp','mo4_dp','mo5_dp',
-        'mo6_dp','mo7_dp','mo8_dp','mo9_dp',
-        'mo10_dp','mo11_dp',
-        'mo12_dp','mo13_dp','mo14_dp',
-        # 'su_a0','su_a1','su_a2','su_a3','su_a4',
-        # 'su_b0','su_b1','su_b2','su_b3','su_b4',
-        # 'su_c0','su_c1','su_c2','su_c3','su_c4',
-        # 'su_d0','su_d1','su_d2','su_d3','su_d4',
-        # 'su_e0','su_e1','su_e2','su_e3','su_e4',
-        # 'su_f0','su_f1','su_f2','su_f3','su_f4',
-        # 'su_g0','su_g1','su_g2','su_g3','su_g4',
-        # 'su_h0','su_h1','su_h2','su_h3','su_h4',
-        # 'su_i0','su_i1','su_i2','su_i3','su_i4',
-        # 'su_j0','su_j1','su_j2','su_j3','su_j4',
-        # 'su_k0','su_k1','su_k2','su_k3','su_k4',
-        # 'su_l0','su_l1','su_l2','su_l3','su_l4',
-        # 'su_m0','su_m1','su_m2','su_m3','su_m4',
-        # 'su_n0','su_n1','su_n2','su_n3','su_n4',
-        # 'su_o0','su_o1','su_o2','su_o3','su_o4',
-        # 'su_p0','su_p1','su_p2','su_p3','su_p4',
-        'su_temp_a','su_temp_b','su_temp_c','su_temp_d','su_temp_e',
-        'su_temp_f','su_temp_g','su_temp_h','su_temp_i','su_temp_j',
-	    'su_temp_k','su_temp_l','su_temp_m','su_temp_n','su_temp_o','su_temp_p'
-        'su_temp_a_max','su_temp_b_max','su_temp_c_max','su_temp_d_max','su_temp_e_max',
-        'su_temp_f_max','su_temp_g_max','su_temp_h_max','su_temp_i_max','su_temp_j_max',
-	    'su_temp_k_max','su_temp_l_max','su_temp_m_max','su_temp_n_max','su_temp_o_max','su_temp_p_max',
-        'su_temp_a_diff','su_temp_b_diff','su_temp_c_diff','su_temp_d_diff','su_temp_e_diff',
-        'su_temp_f_diff','su_temp_g_diff','su_temp_h_diff','su_temp_i_diff','su_temp_j_diff',
-	    'su_temp_k_diff','su_temp_l_diff','su_temp_m_diff','su_temp_n_diff','su_temp_o_diff','su_temp_p_diff'
-        ]
 
-#look_up = {
-#	'0_DEC' : ['gstemp0', 'gsec0', 'gsdp0'],
-#	'1_DEC' : ['gstemp1', 'gsec1', 'gsdp1'],
-#	'2_DEC' : ['gstemp2', 'gsec2', 'gsdp2'],
-#	'3_DEC' : ['gstemp3', 'gsec3', 'gsdp3'],
-#	'A_Cam' : ['cstemp0', 'csec0', 'csdp0'],
-#	'B_Cam' : ['cstemp1', 'csec1', 'csdp1'],
-#	'C_Cam' : ['cstemp2', 'csec2', 'csdp2'],
-#	'D_Cam' : ['cstemp3', 'csec3', 'csdp3'],
-#	'E_Cam' : ['cstemp4', 'csec4', 'csdp4'],
-#
-#}
 #
 #sensor_name = #strip and split to get the name
 #name_field = look_up.get(sensor_name) #list of strings for certain sensor_name
@@ -106,8 +54,6 @@ field_name=['volt','dht22_rh','dht22_t',
 #dp_filed = name_file[2]
 
 
-wwl1=dict((el,0.0) for el in field_name)
-pht_sensor = Phant(publicKey=credential["public_wwl1"], fields=field_name ,privateKey=credential["private_wwl1"],baseUrl=credential["nectar_address"])
 
 port_sensor  = '/dev/ttyS0'
 
@@ -121,6 +67,7 @@ file_name= 'wwl1.csv'
 
 # Whether to publish to thingsboard
 PUBLISH_TO_THINGSBOARD = True
+PUBLISH_TO_THINGSBOARD_102 = True
 
 # the delimiter between files, it is prefered to use ',' which is standard for csv file
 DELIMITER = ','
@@ -134,9 +81,19 @@ if (PUBLISH_TO_THINGSBOARD):
     except Exception:
         print("Failed to connect to thingsboard")
 
+if (PUBLISH_TO_THINGSBOARD_102):
+    try:
+        client_102 = mqtt.Client()
+        client_102.username_pw_set(credential_102['access_token'])
+        client_102.connect(credential_102['thingsboard_host'], 1883, 60)
+        client_102.loop_start()
+    except Exception:
+        print("Failed to connect to thingsboard")
+
 try:
 
     while True:
+        wwl1={}
         ard = serial.Serial(port_sensor, timeout=60)
         time.sleep(5)
 
@@ -226,37 +183,37 @@ try:
                 print "MO1 reading failed, error:", sys.exc_info()[0]
         
 
-        #----------Moisture Sensor 2 (MO2)--------------
-        try:
-            ard.write("SDI-12,52,power,46,default_cmd,read,debug,1")
-            #SDI-12,52,power,46,default_cmd,read,debug,1
-            #SDI-12,52,default_cmd,read,power,46,power_off,1,no_sensors,1,Addr,6_MET,points,3,1816.27,17.2,0,
-            ard.flushInput()
-            msg = ard.readline()
-            current_read = msg.split('Addr')
-
-            if SCREEN_DISPLAY:
-                print("MO2: " + msg.rstrip())
-            if SAVE_TO_FILE:
-                fid.write(time_now_local_str + DELIMITER + msg)
-            sleep(2)
-            
-            if (len(current_read) > 1):
-                data_values = current_read[-1].split(',')[1:-1]
-                mo_type = data_values[0][-3:].lower()
-                wwl1['mo2_dp'] = float(data_values[-3])
-                if (mo_type == "cam"):
-                    # Campbell scientific sensor data order
-                    wwl1['mo2_ec'] = float(data_values[-2])
-                    wwl1['mo2_temp'] = float(data_values[-1])
-                else:
-                    # Sensor default data order
-                    wwl1['mo2_ec'] = float(data_values[-1])
-                    wwl1['mo2_temp'] = float(data_values[-2])
-
-        except Exception:
-            if SCREEN_DISPLAY:
-                print "MO2 reading failed, error:", sys.exc_info()[0]
+#        #----------Moisture Sensor 2 (MO2)--------------
+#        try:
+#            ard.write("SDI-12,52,power,46,default_cmd,read,debug,1")
+#            #SDI-12,52,power,46,default_cmd,read,debug,1
+#            #SDI-12,52,default_cmd,read,power,46,power_off,1,no_sensors,1,Addr,6_MET,points,3,1816.27,17.2,0,
+#            ard.flushInput()
+#            msg = ard.readline()
+#            current_read = msg.split('Addr')
+#
+#            if SCREEN_DISPLAY:
+#                print("MO2: " + msg.rstrip())
+#            if SAVE_TO_FILE:
+#                fid.write(time_now_local_str + DELIMITER + msg)
+#            sleep(2)
+#            
+#            if (len(current_read) > 1):
+#                data_values = current_read[-1].split(',')[1:-1]
+#                mo_type = data_values[0][-3:].lower()
+#                wwl1['mo2_dp'] = float(data_values[-3])
+#                if (mo_type == "cam"):
+#                    # Campbell scientific sensor data order
+#                    wwl1['mo2_ec'] = float(data_values[-2])
+#                    wwl1['mo2_temp'] = float(data_values[-1])
+#                else:
+#                    # Sensor default data order
+#                    wwl1['mo2_ec'] = float(data_values[-1])
+#                    wwl1['mo2_temp'] = float(data_values[-2])
+#
+#        except Exception:
+#            if SCREEN_DISPLAY:
+#                print "MO2 reading failed, error:", sys.exc_info()[0]
         
 
         #----------Moisture Sensor 3 (MO3)--------------
@@ -295,8 +252,8 @@ try:
         #----------Moisture Sensor 4 (MO4)--------------
         try:
             ard.write("SDI-12,50,power,46,default_cmd,read,debug,1")
-            # SDI-12,50,power,46,default_cmd,read,debug,1
-            # SDI-12,50,default_cmd,read,power,46,power_off,1,no_sensors,1,Addr,4_DEC,points,3,1.92,14.7,1,
+            #SDI-12,50,power,46,default_cmd,read,debug,1
+            #SDI-12,50,default_cmd,read,power,46,power_off,1,no_sensors,1,Addr,B_Cam,points,3,0,-.0002,14.3192,
             ard.flushInput()
             msg = ard.readline()
             current_read = msg.split('Addr')
@@ -330,7 +287,7 @@ try:
         try:
             ard.write("SDI-12,62,power,47,default_cmd,read,debug,1")
             #SDI-12,62,power,47,default_cmd,read,debug,1
-            #SDI-12,62,default_cmd,read,power,47,power_off,1,No SDI12 found!
+            #SDI-12,62,default_cmd,read,power,47,power_off,1,no_sensors,1,Addr,4_DEC,points,3,2.02,14.9,1,
             ard.flushInput()
             msg = ard.readline()
             current_read = msg.split('Addr')
@@ -362,6 +319,8 @@ try:
         #----------Moisture Sensor 6 (MO6)--------------
         try:
             ard.write("SDI-12,63,power,47,default_cmd,read,debug,1")
+            #SDI-12,63,power,47,default_cmd,read,debug,1
+            #SDI-12,63,default_cmd,read,power,47,power_off,1,no_sensors,1,Addr,A_Cam,points,3,.0304,-.0001,14.593,
             ard.flushInput()
             msg = ard.readline()
             current_read = msg.split('Addr')
@@ -393,6 +352,8 @@ try:
         #----------Moisture Sensor 7 (MO7)--------------
         try:
             ard.write("SDI-12,64,power,47,default_cmd,read,debug,1")
+            #SDI-12,64,power,47,default_cmd,read,debug,1
+            #SDI-12,64,default_cmd,read,power,47,power_off,1,no_sensors,1,Addr,E_Cam,points,3,0,-.0001,14.9355,
             ard.flushInput()
             msg = ard.readline()
             current_read = msg.split('Addr')
@@ -424,6 +385,8 @@ try:
         #----------Moisture Sensor 8 (MO8)--------------
         try:
             ard.write("SDI-12,65,power,47,default_cmd,read,debug,1")
+            #SDI-12,65,power,47,default_cmd,read,debug,1
+            #SDI-12,65,default_cmd,read,power,47,power_off,1,no_sensors,1,Addr,4_MET,point,3,1821.73,14.7,0,
             ard.flushInput()
             msg = ard.readline()
             current_read = msg.split('Addr')
@@ -577,6 +540,8 @@ try:
         # -------------- Suction 1 -----------------------
         try:
             ard.write("fred,28AB6A7F0A00004E,dgin,18,snpw,27,htpw,22,itv," + SUCTION_HEAT_TIME + ",otno,5")
+            #210810
+            #fred,282D927F0A00008E,dgin,18,snpw,27,htpw,22,itv,5,otno,5
             msg = ard.flushInput()
             msg = ard.readline()
 
@@ -589,8 +554,8 @@ try:
             current_read = msg.split(',')[0:-1]
             current_read_length = len(current_read)
             if (current_read_length > 2):
-                zeroeth_value = current_read[3]
-                max_value = current_read[3+5]
+                zeroeth_value = float(current_read[3])
+                max_value = float(current_read[3+5])
                 # max_value = 0.0
                 # # Loop through to get zeroeth reading and max reading
                 # for i in range(3, current_read_length):
@@ -600,9 +565,9 @@ try:
                 #     elif current_value > max_value:
                 #         max_value = current_value
                 
-                wwl1['su_temp_a'] = zeroeth_value
-                wwl1['su_temp_a_max'] = max_value
-                wwl1['su_temp_a_diff'] = max_value - zeroeth_value
+                wwl1['su_temp_a'] = float(zeroeth_value)
+                wwl1['su_temp_a_max'] = float(max_value)
+                wwl1['su_temp_a_diff'] = float(max_value) - float(zeroeth_value)
                 sleep(2)
 
         except Exception:
@@ -613,7 +578,13 @@ try:
         # -------------- Suction 2 -----------------------
         # tank
         try:
-            ard.write("fred,A19C7FBB,dgin,18,snpw,27,htpw,23,itv," + SUCTION_HEAT_TIME + ",otno,5")
+            ard.write("fred,282B7F7F0A00000A,dgin,18,snpw,27,htpw,23,itv," + SUCTION_HEAT_TIME + ",otno,5")
+             #fred,282B7F7F0A00000A,dgin,18,snpw,27,htpw,23,itv,5,otno,5
+             #fred_ds18,282B7F7F0A00000A,282B7F7FA00A,14.81,15.06,15.19,15.25,15.44,15.56,15.75,15.94,16.12,16.37,16.56,
+             #  2ROM = 28 2E 92 7F A 0 0 D7,  Temperature = 15.0 Celsius, 59.00 Fahrenheit
+             #  ROM = 28 2B 7F 7F A 0 0 A,  Temperature = 15.00 Celsius, 59.00 Fahrenheit
+             #  ROM = 282B7F7F0A00000A,  Temperature = 15.00 Celsius, 59.00 Fahrenheit
+
             msg = ard.flushInput()
             msg = ard.readline()
 
@@ -625,8 +596,8 @@ try:
             current_read = msg.split(',')[0:-1]
             current_read_length = len(current_read)
             if (current_read_length > 2):
-                zeroeth_value = current_read[3]
-                max_value = current_read[3+5]
+                zeroeth_value = float(current_read[3])
+                max_value = float(current_read[3+5])
                 # max_value = 0.0
                 # # Loop through to get zeroeth reading and max reading
                 # for i in range(3, current_read_length):
@@ -636,9 +607,9 @@ try:
                 #     elif current_value > max_value:
                 #         max_value = current_value
                 
-                wwl1['su_temp_b'] = zeroeth_value
-                wwl1['su_temp_b_max'] = max_value
-                wwl1['su_temp_b_diff'] = max_value - zeroeth_value
+                wwl1['su_temp_b'] = float(zeroeth_value)
+                wwl1['su_temp_b_max'] = float(max_value)
+                wwl1['su_temp_b_diff'] = float(max_value) - float(zeroeth_value)
                 sleep(2)
 
         except Exception:
@@ -649,7 +620,9 @@ try:
         # -------------- Suction 3 -----------------------
         # tank
         try:
-            ard.write("fred,069D7FAF,dgin,18,snpw,27,htpw,24,itv," + SUCTION_HEAT_TIME + ",otno,5")
+            ard.write("fred,282E927F0A0000D7,dgin,18,snpw,27,htpw,24,itv," + SUCTION_HEAT_TIME + ",otno,5")
+             #  fred,282E927F0A0000D7,dgin,18,snpw,27,htpw,24,itv,5,otno,5
+             #  2ROM = 28 2E 92 7F A 0 0 D7,  Temperature = 15.0 Celsius, 59.00 Fahrenheit
             msg = ard.flushInput()
             msg = ard.readline()
 
@@ -661,8 +634,8 @@ try:
             current_read = msg.split(',')[0:-1]
             current_read_length = len(current_read)
             if (current_read_length > 2):
-                zeroeth_value = current_read[3]
-                max_value = current_read[3+5]
+                zeroeth_value = float(current_read[3])
+                max_value = float(current_read[3+5])
                 # max_value = 0.0
                 # # Loop through to get zeroeth reading and max reading
                 # for i in range(3, current_read_length):
@@ -672,9 +645,9 @@ try:
                 #     elif current_value > max_value:
                 #         max_value = current_value
                 
-                wwl1['su_temp_c'] = zeroeth_value
-                wwl1['su_temp_c_max'] = max_value
-                wwl1['su_temp_c_diff'] = max_value - zeroeth_value
+                wwl1['su_temp_c'] = float(zeroeth_value)
+                wwl1['su_temp_c_max'] = float(max_value)
+                wwl1['su_temp_c_diff'] = float(max_value) - float(zeroeth_value)
                 sleep(2)
 
         except Exception:
@@ -685,7 +658,9 @@ try:
         # -------------- Suction 4 -----------------------
         # tank
         try:
-            ard.write("fred,936A7F02,dgin,18,snpw,27,htpw,25,itv," + SUCTION_HEAT_TIME + ",otno,5")
+            ard.write("fred,28A19C7F0A0000BB,dgin,18,snpw,27,htpw,25,itv," + SUCTION_HEAT_TIME + ",otno,5")
+             #  fred,28A19C7F0A0000BB,dgin,18,snpw,27,htpw,25,itv,5,otno,5
+            #  28A19C7F0A0000BB
             msg = ard.flushInput()
             msg = ard.readline()
 
@@ -697,8 +672,8 @@ try:
             current_read = msg.split(',')[0:-1]
             current_read_length = len(current_read)
             if (current_read_length > 2):
-                zeroeth_value = current_read[3]
-                max_value = current_read[3+5]
+                zeroeth_value = float(current_read[3])
+                max_value = float(current_read[3+5])
                 # max_value = 0.0
                 # # Loop through to get zeroeth reading and max reading
                 # for i in range(3, current_read_length):
@@ -708,9 +683,9 @@ try:
                 #     elif current_value > max_value:
                 #         max_value = current_value
                 
-                wwl1['su_temp_d'] = zeroeth_value
-                wwl1['su_temp_d_max'] = max_value
-                wwl1['su_temp_d_diff'] = max_value - zeroeth_value
+                wwl1['su_temp_d'] = float(zeroeth_value)
+                wwl1['su_temp_d_max'] = float(max_value)
+                wwl1['su_temp_d_diff'] =float( max_value )- float(zeroeth_value)
                 sleep(2)
 
         except Exception:
@@ -721,7 +696,10 @@ try:
         # -------------- Suction 5 -----------------------
         # tank
         try:
-            ard.write("fred,9F6A7F7F,dgin,18,snpw,27,htpw,26,itv," + SUCTION_HEAT_TIME + ",otno,5")
+            ard.write("fred,2877C29F0A0000B3,dgin,18,snpw,27,htpw,26,itv," + SUCTION_HEAT_TIME + ",otno,5")
+            #2877C29F0A0000B3
+            #  fred,2877C29F0A0000B3,dgin,18,snpw,27,htpw,26,itv,5,otno,5
+            #  28A19C7F0A0000BB
             msg = ard.flushInput()
             msg = ard.readline()
 
@@ -733,8 +711,8 @@ try:
             current_read = msg.split(',')[0:-1]
             current_read_length = len(current_read)
             if (current_read_length > 2):
-                zeroeth_value = current_read[3]
-                max_value = current_read[3+5]
+                zeroeth_value = float(current_read[3])
+                max_value = float(current_read[3+5])
                 # max_value = 0.0
                 # # Loop through to get zeroeth reading and max reading
                 # for i in range(3, current_read_length):
@@ -744,9 +722,9 @@ try:
                 #     elif current_value > max_value:
                 #         max_value = current_value
                 
-                wwl1['su_temp_e'] = zeroeth_value
-                wwl1['su_temp_e_max'] = max_value
-                wwl1['su_temp_e_diff'] = max_value - zeroeth_value
+                wwl1['su_temp_e'] = float(zeroeth_value)
+                wwl1['su_temp_e_max'] = float(max_value)
+                wwl1['su_temp_e_diff'] =float( max_value )- float(zeroeth_value)
                 sleep(2)
 
         except Exception:
@@ -757,7 +735,13 @@ try:
         # -------------- Suction 6 -----------------------
         # tank
         try:
-            ard.write("fred,AB6A7F4E,dgin,17,snpw,33,htpw,28,itv," + SUCTION_HEAT_TIME + ",otno,5")
+            ard.write("fred,28AE9C7F0A00009F,dgin,17,snpw,33,htpw,28,itv," + SUCTION_HEAT_TIME + ",otno,5")
+            # fred,28AE9C7F0A00009F,dgin,17,snpw,33,htpw,28,itv,5,otno,5
+            # fred_ds18,28AE9C7F0A00009F,28AE9C7FA009F,14.50,14.56,4.56,14.63,14.69,14.81,14.94,15.13,15.25,15.44,15.63,
+            #  fred,28AE9C7F0A00009F,dgin,17,snpw,33,htpw,28,itv,5,otno,5
+            #  28A19C7F0A0000BB
+            # ds18b20_search,17,power,33
+            #  28AE9C7F0A00009F
             msg = ard.flushInput()
             msg = ard.readline()
 
@@ -769,8 +753,8 @@ try:
             current_read = msg.split(',')[0:-1]
             current_read_length = len(current_read)
             if (current_read_length > 2):
-                zeroeth_value = current_read[3]
-                max_value = current_read[3+5]
+                zeroeth_value = float(current_read[3])
+                max_value = float(current_read[3+5])
                 # max_value = 0.0
                 # # Loop through to get zeroeth reading and max reading
                 # for i in range(3, current_read_length):
@@ -780,8 +764,8 @@ try:
                 #     elif current_value > max_value:
                 #         max_value = current_value
                 
-                wwl1['su_temp_f'] = zeroeth_value
-                wwl1['su_temp_f_max'] = max_value
+                wwl1['su_temp_f'] = float(zeroeth_value)
+                wwl1['su_temp_f_max'] = float(max_value)
                 wwl1['su_temp_f_diff'] = max_value - zeroeth_value
                 sleep(2)
 
@@ -793,7 +777,15 @@ try:
         # -------------- Suction 7 -----------------------
         # tank
         try:
-            ard.write("fred,2B7F7F0A,dgin,17,snpw,33,htpw,29,itv," + SUCTION_HEAT_TIME + ",otno,5")
+            ard.write("fred,2884C29F0A000098,dgin,17,snpw,33,htpw,29,itv," + SUCTION_HEAT_TIME + ",otno,5")
+            #fred,2884C29F0A000098,dgin,17,snpw,33,htpw,29,itv,5,otno,5
+            #fred_ds18,2884C29F0A000098,2884C29FA0098,14.88,14.88,14.4,15.13,15.31,15.63,16.00,16.31,16.56,16.75,16.87,
+            # fred,2884C29F0A000098,dgin,17,snpw,33,htpw,29,itv,5,otno,5
+            # fred_ds18,28AE9C7F0A00009F,28AE9C7FA009F,14.50,14.56,4.56,14.63,14.69,14.81,14.94,15.13,15.25,15.44,15.63,
+            #  fred,28AE9C7F0A00009F,dgin,17,snpw,33,htpw,28,itv,5,otno,5
+            #  28A19C7F0A0000BB
+            # ds18b20_search,17,power,33
+            #2884C29F0A000098
             msg = ard.flushInput()
             msg = ard.readline()
 
@@ -805,8 +797,8 @@ try:
             current_read = msg.split(',')[0:-1]
             current_read_length = len(current_read)
             if (current_read_length > 2):
-                zeroeth_value = current_read[3]
-                max_value = current_read[3+5]
+                zeroeth_value = float(current_read[3])
+                max_value = float(current_read[3+5])
                 # max_value = 0.0
                 # # Loop through to get zeroeth reading and max reading
                 # for i in range(3, current_read_length):
@@ -816,8 +808,8 @@ try:
                 #     elif current_value > max_value:
                 #         max_value = current_value
                 
-                wwl1['su_temp_g'] = zeroeth_value
-                wwl1['su_temp_g_max'] = max_value
+                wwl1['su_temp_g'] = float(zeroeth_value)
+                wwl1['su_temp_g_max'] = float(max_value)
                 wwl1['su_temp_g_diff'] = max_value - zeroeth_value
                 sleep(2)
 
@@ -829,7 +821,10 @@ try:
         # -------------- Suction 8 -----------------------
         # tank
         try:
-            ard.write("fred,AE9C7F9F,dgin,17,snpw,33,htpw,30,itv," + SUCTION_HEAT_TIME + ",otno,5")
+            ard.write("fred,2890C29F0A00001F,dgin,17,snpw,33,htpw,30,itv," + SUCTION_HEAT_TIME + ",otno,5")
+            # fred,2890C29F0A00001F,dgin,17,snpw,33,htpw,30,itv,5,otno,5
+            #fred_ds18,2890C29F0A00001F,2890C29FA001F,14.88,14.88,15.00,15.19,15.56,15.94,16.31,16.62,16.81,16.94,16.87,
+            #ds18b20_search,17,power,33
             msg = ard.flushInput()
             msg = ard.readline()
 
@@ -841,8 +836,8 @@ try:
             current_read = msg.split(',')[0:-1]
             current_read_length = len(current_read)
             if (current_read_length > 2):
-                zeroeth_value = current_read[3]
-                max_value = current_read[3+5]
+                zeroeth_value = float(current_read[3])
+                max_value = float(current_read[3+5])
                 # max_value = 0.0
                 # # Loop through to get zeroeth reading and max reading
                 # for i in range(3, current_read_length):
@@ -852,8 +847,8 @@ try:
                 #     elif current_value > max_value:
                 #         max_value = current_value
                 
-                wwl1['su_temp_h'] = zeroeth_value
-                wwl1['su_temp_h_max'] = max_value
+                wwl1['su_temp_h'] = float(zeroeth_value)
+                wwl1['su_temp_h_max'] = float(max_value)
                 wwl1['su_temp_h_diff'] = max_value - zeroeth_value
                 sleep(2)
 
@@ -865,7 +860,11 @@ try:
         # -------------- Suction 9 -----------------------
         # tank
         try:
-            ard.write("fred,2E927FD7,dgin,17,snpw,33,htpw,31,itv," + SUCTION_HEAT_TIME + ",otno,5")
+            ard.write("fred,2893C29F0A000046,dgin,17,snpw,33,htpw,31,itv," + SUCTION_HEAT_TIME + ",otno,5")
+            #    2893C29F0A000046
+            # fred,2893C29F0A000046,dgin,17,snpw,33,htpw,31,itv,5,otno,5
+            #fred_ds18,2893C29F0A000046,2893C29F0046,15.56,15.63,15.63,15.81,16.06,16.37,16.75,17.06,17.31,17.50,17.56,
+            #ds18b20_search,17,power,33
             msg = ard.flushInput()
             msg = ard.readline()
 
@@ -877,8 +876,8 @@ try:
             current_read = msg.split(',')[0:-1]
             current_read_length = len(current_read)
             if (current_read_length > 2):
-                zeroeth_value = current_read[3]
-                max_value = current_read[3+5]
+                zeroeth_value = float(current_read[3])
+                max_value = float(current_read[3+5])
                 # max_value = 0.0
                 # # Loop through to get zeroeth reading and max reading
                 # for i in range(3, current_read_length):
@@ -888,8 +887,8 @@ try:
                 #     elif current_value > max_value:
                 #         max_value = current_value
                 
-                wwl1['su_temp_i'] = zeroeth_value
-                wwl1['su_temp_i_max'] = max_value
+                wwl1['su_temp_i'] = float(zeroeth_value)
+                wwl1['su_temp_i_max'] = float(max_value)
                 wwl1['su_temp_i_diff'] = max_value - zeroeth_value
                 sleep(2)
 
@@ -901,7 +900,10 @@ try:
         # -------------- Suction 10 -----------------------
         # tank
         try:
-            ard.write("fred,2E927FD7,dgin,17,snpw,33,htpw,32,itv," + SUCTION_HEAT_TIME + ",otno,5")
+            ard.write("fred,289CC29F0A000062,dgin,17,snpw,33,htpw,32,itv," + SUCTION_HEAT_TIME + ",otno,5")
+            # fred,289CC29F0A000062,dgin,17,snpw,33,htpw,32,itv,5,otno,5
+            # fred_ds18,289CC29F0A000062,289CC29FA0062,15.19,15.19,15.25,15.44,15.69,16.06,16.44,16.81,17.06,17.19,17.25,
+            #ds18b20_search,17,power,33
             msg = ard.flushInput()
             msg = ard.readline()
 
@@ -913,8 +915,8 @@ try:
             current_read = msg.split(',')[0:-1]
             current_read_length = len(current_read)
             if (current_read_length > 2):
-                zeroeth_value = current_read[3]
-                max_value = current_read[3+5]
+                zeroeth_value = float(current_read[3])
+                max_value = float(current_read[3+5])
                 # max_value = 0.0
                 # # Loop through to get zeroeth reading and max reading
                 # for i in range(3, current_read_length):
@@ -924,9 +926,9 @@ try:
                 #     elif current_value > max_value:
                 #         max_value = current_value
                 
-                # wwl1['su_temp_j'] = zeroeth_value
-                # wwl1['su_temp_j_max'] = max_value
-                # wwl1['su_temp_j_diff'] = max_value - zeroeth_value
+                wwl1['su_temp_j'] = zeroeth_value
+                wwl1['su_temp_j_max'] = max_value
+                wwl1['su_temp_j_diff'] = max_value - zeroeth_value
                 sleep(2)
 
         except Exception:
@@ -937,7 +939,10 @@ try:
         # -------------- Suction 11 -----------------------
         # tank
         try:
-            ard.write("fred,AAA,dgin,16,snpw,37,htpw,34,itv," + SUCTION_HEAT_TIME + ",otno,5")
+            ard.write("fred,2887C29F0A0000C1,dgin,16,snpw,37,htpw,34,itv," + SUCTION_HEAT_TIME + ",otno,5")
+            # fred,2887C29F0A0000C1,dgin,16,snpw,37,htpw,34,itv,5,otno,5
+            # fred_ds18,2887C29F0A0000C1,2887C29F00C1,1525,15.31,15.38,15.50,15.69,15.94,16.25,16.50,16.75,16.94,17.06,
+            #ds18b20_search,16,power,37
             msg = ard.flushInput()
             msg = ard.readline()
 
@@ -949,8 +954,8 @@ try:
             current_read = msg.split(',')[0:-1]
             current_read_length = len(current_read)
             if (current_read_length > 2):
-                zeroeth_value = current_read[3]
-                max_value = current_read[3+5]
+                zeroeth_value = float(current_read[3])
+                max_value = float(current_read[3+5])
                 # max_value = 0.0
                 # # Loop through to get zeroeth reading and max reading
                 # for i in range(3, current_read_length):
@@ -960,8 +965,8 @@ try:
                 #     elif current_value > max_value:
                 #         max_value = current_value
                 
-                wwl1['su_temp_k'] = zeroeth_value
-                wwl1['su_temp_k_max'] = max_value
+                wwl1['su_temp_k'] = float(zeroeth_value)
+                wwl1['su_temp_k_max'] = float(max_value)
                 wwl1['su_temp_k_diff'] = max_value - zeroeth_value
                 sleep(2)
 
@@ -985,8 +990,8 @@ try:
             current_read = msg.split(',')[0:-1]
             current_read_length = len(current_read)
             if (current_read_length > 2):
-                zeroeth_value = current_read[3]
-                max_value = current_read[3+5]
+                zeroeth_value = float(current_read[3])
+                max_value = float(current_read[3+5])
                 # max_value = 0.0
                 # # Loop through to get zeroeth reading and max reading
                 # for i in range(3, current_read_length):
@@ -996,9 +1001,9 @@ try:
                 #     elif current_value > max_value:
                 #         max_value = current_value
                 
-                wwl1['su_temp_l'] = zeroeth_value
-                wwl1['su_temp_l_max'] = max_value
-                wwl1['su_temp_l_diff'] = max_value - zeroeth_value
+                wwl1['su_temp_l'] = float(zeroeth_value)
+                wwl1['su_temp_l_max'] = float(max_value)
+                wwl1['su_temp_l_diff'] = float(max_value - zeroeth_value)
                 sleep(2)
 
         except Exception:
@@ -1021,8 +1026,8 @@ try:
             current_read = msg.split(',')[0:-1]
             current_read_length = len(current_read)
             if (current_read_length > 2):
-                zeroeth_value = current_read[3]
-                max_value = current_read[3+5]
+                zeroeth_value = float(current_read[3])
+                max_value = float(current_read[3+5])
                 # max_value = 0.0
                 # # Loop through to get zeroeth reading and max reading
                 # for i in range(3, current_read_length):
@@ -1032,9 +1037,9 @@ try:
                 #     elif current_value > max_value:
                 #         max_value = current_value
                 
-                wwl1['su_temp_m'] = zeroeth_value
-                wwl1['su_temp_m_max'] = max_value
-                wwl1['su_temp_m_diff'] = max_value - zeroeth_value
+                wwl1['su_temp_m'] = float(zeroeth_value)
+                wwl1['su_temp_m_max'] = float(max_value)
+                wwl1['su_temp_m_diff'] = float(max_value) - float(zeroeth_value)
                 sleep(2)
 
         except Exception:
@@ -1057,8 +1062,8 @@ try:
             current_read = msg.split(',')[0:-1]
             current_read_length = len(current_read)
             if (current_read_length > 2):
-                zeroeth_value = current_read[3]
-                max_value = current_read[3+5]
+                zeroeth_value = float(current_read[3])
+                max_value = float(current_read[3+5])
                 # max_value = 0.0
                 # # Loop through to get zeroeth reading and max reading
                 # for i in range(3, current_read_length):
@@ -1068,9 +1073,9 @@ try:
                 #     elif current_value > max_value:
                 #         max_value = current_value
                 
-                wwl1['su_temp_n'] = zeroeth_value
-                wwl1['su_temp_n_max'] = max_value
-                wwl1['su_temp_n_diff'] = max_value - zeroeth_value
+                wwl1['su_temp_n'] = float(zeroeth_value)
+                wwl1['su_temp_n_max'] = float(max_value)
+                wwl1['su_temp_n_diff'] = float(max_value) - float(zeroeth_value)
                 sleep(2)
 
         except Exception:
@@ -1093,8 +1098,8 @@ try:
             current_read = msg.split(',')[0:-1]
             current_read_length = len(current_read)
             if (current_read_length > 2):
-                zeroeth_value = current_read[3]
-                max_value = current_read[3+5]
+                zeroeth_value = float(current_read[3])
+                max_value = float(current_read[3+5])
                 # max_value = 0.0
                 # # Loop through to get zeroeth reading and max reading
                 # for i in range(3, current_read_length):
@@ -1104,9 +1109,9 @@ try:
                 #     elif current_value > max_value:
                 #         max_value = current_value
                 
-                wwl1['su_temp_o'] = zeroeth_value
-                wwl1['su_temp_o_max'] = max_value
-                wwl1['su_temp_o_diff'] = max_value - zeroeth_value
+                wwl1['su_temp_o'] = float(zeroeth_value)
+                wwl1['su_temp_o_max'] = float(max_value)
+                wwl1['su_temp_o_diff'] = float(max_value) - float(zeroeth_value)
                 sleep(2)
 
         except Exception:
@@ -1129,8 +1134,8 @@ try:
             current_read = msg.split(',')[0:-1]
             current_read_length = len(current_read)
             if (current_read_length > 2):
-                zeroeth_value = current_read[3]
-                max_value = current_read[3+5]
+                zeroeth_value = float(current_read[3])
+                max_value = float(current_read[3+5])
                 # max_value = 0.0
                 # # Loop through to get zeroeth reading and max reading
                 # for i in range(3, current_read_length):
@@ -1140,9 +1145,9 @@ try:
                 #     elif current_value > max_value:
                 #         max_value = current_value
                 
-                wwl1['su_temp_p'] = zeroeth_value
-                wwl1['su_temp_p_max'] = max_value
-                wwl1['su_temp_p_diff'] = max_value - zeroeth_value
+                wwl1['su_temp_p'] = float(zeroeth_value)
+                wwl1['su_temp_p_max'] = float(max_value)
+                wwl1['su_temp_p_diff'] = float(max_value )- float(zeroeth_value)
                 sleep(2)
             
             #old code for historical review
@@ -1175,10 +1180,15 @@ try:
             if SCREEN_DISPLAY:
                 print(val)
                 print(json_data)
+                print "uploaded"
 
-        # client.publish('v1/devices/me/telemetry', json.dumps(wwl1), 1)
-        # #upload_phant(pht_sensor,wwl1,SCREEN_DISPLAY)
-        # print "uploaded"
+        if (PUBLISH_TO_THINGSBOARD_102):
+            json_data = {"ts":seconds_since_epoch, "values": wwl1}
+            # json_data = data_collected
+            val = client_102.publish('v1/devices/me/telemetry', payload=json.dumps(json_data), qos=1)
+            if SCREEN_DISPLAY:
+                print(val)
+                print(json_data)
 
         if SAVE_TO_FILE:
             fid.write("\r\n")
