@@ -359,7 +359,7 @@ try:
     # Suction Sensor 1
     try:
         sensor_name = "suct1"
-        ard.write("fred,286BD0CF0C000063,dgin,52,snpw,49,htpw,48,itv,1000,otno,5,debug,1")
+        ard.write("fred,283904D00C0000C0,dgin,19,snpw,22,htpw,30,itv,1000,otno,5,debug,1")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
@@ -382,7 +382,7 @@ try:
     # Suction Sensor 2
     try:
         sensor_name = "suct2"
-        ard.write("fred,285CABCF0C000016,dgin,52,snpw,49,htpw,48,itv,1000,otno,5,debug,1")
+        ard.write("fred,284AABCF0C0000FF,dgin,18,snpw,23,htpw,31,itv,1000,otno,5,debug,1")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
@@ -405,7 +405,7 @@ try:
     # Suction Sensor 3
     try:
         sensor_name = "suct3"
-        ard.write("fred,2864D0CF0C000047,dgin,52,snpw,49,htpw,48,itv,1000,otno,5,debug,1")
+        ard.write("fred,286BABCF0C00007E,dgin,17,snpw,24,htpw,32,itv,1000,otno,5,debug,1")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
@@ -428,7 +428,7 @@ try:
     # Suction Sensor 4
     try:
         sensor_name = "suct4"
-        ard.write("fred,2859ABCF0C0000FD,dgin,52,snpw,49,htpw,48,itv,1000,otno,5,debug,1")
+        ard.write("fred,28FDCFCF0C000073,dgin,16,snpw,25,htpw,33,itv,1000,otno,5,debug,1")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
@@ -451,7 +451,7 @@ try:
     # Suction Sensor 5
     try:
         sensor_name = "suct5"
-        ard.write("fred,28214B330E000032,dgin,52,snpw,49,htpw,48,itv,1000,otno,5,debug,1")
+        ard.write("fred,2871F9300E000058,dgin,15,snpw,26,htpw,34,itv,1000,otno,5,debug,1")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
@@ -474,7 +474,7 @@ try:
     # Suction Sensor 6
     try:
         sensor_name = "suct6"
-        ard.write("fred,2804D0CF0C000084,dgin,52,snpw,49,htpw,48,itv,1000,otno,5,debug,1")
+        ard.write("fred,286BD0CF0C000063,dgin,14,snpw,27,htpw,35,itv,1000,otno,5,debug,1")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
@@ -497,7 +497,7 @@ try:
     # Suction Sensor 7
     try:
         sensor_name = "suct7"
-        ard.write("fred,288CABCF0C0000D2,dgin,52,snpw,49,htpw,48,itv,1000,otno,5,debug,1")
+        ard.write("fred,2868F9300E000095,dgin,3,snpw,28,htpw,36,itv,1000,otno,5,debug,1")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
@@ -520,7 +520,7 @@ try:
     # Suction Sensor 8
     try:
         sensor_name = "suct8"
-        ard.write("fred,283204D00C000038,dgin,52,snpw,49,htpw,48,itv,1000,otno,5,debug,1")
+        ard.write("fred,286EABCF0C000095,dgin,4,snpw,29,htpw,37,itv,1000,otno,5,debug,1")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
