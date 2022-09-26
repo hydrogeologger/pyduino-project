@@ -359,11 +359,13 @@ try:
     # Suction Sensor 1
     try:
         sensor_name = "suct1"
-        ard.write("fred,283904D00C0000C0,dgin,19,snpw,22,htpw,30,itv,1000,otno,5,debug,1")
+        ard.write("fred,283904D00C0000C0,dgin,19,snpw,22,htpw,30,itv,1000,otno,5,debug,0")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
-        data_collected['suct1'] = float(current_read[2])
+        temp_baseline = float(current_read[-11])
+        temp_diff = float(current_read[-6]) - temp_baseline
+        data_collected['suct1'] = temp_diff
     except Exception:
         if SCREEN_DISPLAY:
             print(msg.rstrip())
@@ -375,18 +377,20 @@ try:
         if SCREEN_DISPLAY:
             print(sensor_name.upper() + ": " + msg.rstrip())
         if SAVE_TO_CSV:
-            csv_fid.write(DELIMITER + current_read[2])
+            csv_fid.write(DELIMITER + str(temp_diff))
             # csv_fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
 
     #---------------------------Suction Sensor 2--------------------------------
     # Suction Sensor 2
     try:
         sensor_name = "suct2"
-        ard.write("fred,284AABCF0C0000FF,dgin,18,snpw,23,htpw,31,itv,1000,otno,5,debug,1")
+        ard.write("fred,284AABCF0C0000FF,dgin,18,snpw,23,htpw,31,itv,1000,otno,5,debug,0")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
-        data_collected['suct2'] = float(current_read[2])
+        temp_baseline = float(current_read[-11])
+        temp_diff = float(current_read[-6]) - temp_baseline
+        data_collected['suct2'] = temp_diff
     except Exception:
         if SCREEN_DISPLAY:
             print(msg.rstrip())
@@ -398,18 +402,20 @@ try:
         if SCREEN_DISPLAY:
             print(sensor_name.upper() + ": " + msg.rstrip())
         if SAVE_TO_CSV:
-            csv_fid.write(DELIMITER + current_read[2])
+            csv_fid.write(DELIMITER + str(temp_diff))
             # csv_fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
 
     #---------------------------Suction Sensor 3--------------------------------
     # Suction Sensor 3
     try:
         sensor_name = "suct3"
-        ard.write("fred,286BABCF0C00007E,dgin,17,snpw,24,htpw,32,itv,1000,otno,5,debug,1")
+        ard.write("fred,286BABCF0C00007E,dgin,17,snpw,24,htpw,32,itv,1000,otno,5,debug,0")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
-        data_collected['suct3'] = float(current_read[2])
+        temp_baseline = float(current_read[-11])
+        temp_diff = float(current_read[-6]) - temp_baseline
+        data_collected['suct3'] = temp_diff
     except Exception:
         if SCREEN_DISPLAY:
             print(msg.rstrip())
@@ -421,18 +427,20 @@ try:
         if SCREEN_DISPLAY:
             print(sensor_name.upper() + ": " + msg.rstrip())
         if SAVE_TO_CSV:
-            csv_fid.write(DELIMITER + current_read[2])
+            csv_fid.write(DELIMITER + str(temp_diff))
             # csv_fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
 
     #---------------------------Suction Sensor 4--------------------------------
     # Suction Sensor 4
     try:
         sensor_name = "suct4"
-        ard.write("fred,28FDCFCF0C000073,dgin,16,snpw,25,htpw,33,itv,1000,otno,5,debug,1")
+        ard.write("fred,28FDCFCF0C000073,dgin,16,snpw,25,htpw,33,itv,1000,otno,5,debug,0")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
-        data_collected['suct4'] = float(current_read[2])
+        temp_baseline = float(current_read[-11])
+        temp_diff = float(current_read[-6]) - temp_baseline
+        data_collected['suct4'] = temp_diff
     except Exception:
         if SCREEN_DISPLAY:
             print(msg.rstrip())
@@ -444,18 +452,20 @@ try:
         if SCREEN_DISPLAY:
             print(sensor_name.upper() + ": " + msg.rstrip())
         if SAVE_TO_CSV:
-            csv_fid.write(DELIMITER + current_read[2])
+            csv_fid.write(DELIMITER + str(temp_diff))
             # csv_fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
 
     #---------------------------Suction Sensor 5--------------------------------
     # Suction Sensor 5
     try:
         sensor_name = "suct5"
-        ard.write("fred,2871F9300E000058,dgin,15,snpw,26,htpw,34,itv,1000,otno,5,debug,1")
+        ard.write("fred,2871F9300E000058,dgin,15,snpw,26,htpw,34,itv,1000,otno,5,debug,0")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
-        data_collected['suct5'] = float(current_read[2])
+        temp_baseline = float(current_read[-11])
+        temp_diff = float(current_read[-6]) - temp_baseline
+        data_collected['suct5'] = temp_diff
     except Exception:
         if SCREEN_DISPLAY:
             print(msg.rstrip())
@@ -467,18 +477,20 @@ try:
         if SCREEN_DISPLAY:
             print(sensor_name.upper() + ": " + msg.rstrip())
         if SAVE_TO_CSV:
-            csv_fid.write(DELIMITER + current_read[2])
+            csv_fid.write(DELIMITER + str(temp_diff))
             # csv_fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
 
     #---------------------------Suction Sensor 6--------------------------------
     # Suction Sensor 6
     try:
         sensor_name = "suct6"
-        ard.write("fred,286BD0CF0C000063,dgin,14,snpw,27,htpw,35,itv,1000,otno,5,debug,1")
+        ard.write("fred,286BD0CF0C000063,dgin,14,snpw,27,htpw,35,itv,1000,otno,5,debug,0")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
-        data_collected['suct6'] = float(current_read[2])
+        temp_baseline = float(current_read[-11])
+        temp_diff = float(current_read[-6]) - temp_baseline
+        data_collected['suct6'] = temp_diff
     except Exception:
         if SCREEN_DISPLAY:
             print(msg.rstrip())
@@ -490,18 +502,20 @@ try:
         if SCREEN_DISPLAY:
             print(sensor_name.upper() + ": " + msg.rstrip())
         if SAVE_TO_CSV:
-            csv_fid.write(DELIMITER + current_read[2])
+            csv_fid.write(DELIMITER + str(temp_diff))
             # csv_fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
 
     #---------------------------Suction Sensor 7--------------------------------
     # Suction Sensor 7
     try:
         sensor_name = "suct7"
-        ard.write("fred,2868F9300E000095,dgin,3,snpw,28,htpw,36,itv,1000,otno,5,debug,1")
+        ard.write("fred,2868F9300E000095,dgin,3,snpw,28,htpw,36,itv,1000,otno,5,debug,0")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
-        data_collected['suct7'] = float(current_read[2])
+        temp_baseline = float(current_read[-11])
+        temp_diff = float(current_read[-6]) - temp_baseline
+        data_collected['suct7'] = temp_diff
     except Exception:
         if SCREEN_DISPLAY:
             print(msg.rstrip())
@@ -513,18 +527,20 @@ try:
         if SCREEN_DISPLAY:
             print(sensor_name.upper() + ": " + msg.rstrip())
         if SAVE_TO_CSV:
-            csv_fid.write(DELIMITER + current_read[2])
+            csv_fid.write(DELIMITER + str(temp_diff))
             # csv_fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
 
     #---------------------------Suction Sensor 8--------------------------------
     # Suction Sensor 8
     try:
         sensor_name = "suct8"
-        ard.write("fred,286EABCF0C000095,dgin,4,snpw,29,htpw,37,itv,1000,otno,5,debug,1")
+        ard.write("fred,286EABCF0C000095,dgin,4,snpw,29,htpw,37,itv,1000,otno,5,debug,0")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
-        data_collected['suct8'] = float(current_read[2])
+        temp_baseline = float(current_read[-11])
+        temp_diff = float(current_read[-6]) - temp_baseline
+        data_collected['suct8'] = temp_diff
     except Exception:
         if SCREEN_DISPLAY:
             print(msg.rstrip())
@@ -536,7 +552,7 @@ try:
         if SCREEN_DISPLAY:
             print(sensor_name.upper() + ": " + msg.rstrip())
         if SAVE_TO_CSV:
-            csv_fid.write(DELIMITER + current_read[2])
+            csv_fid.write(DELIMITER + str(temp_diff))
             # csv_fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
 
 
