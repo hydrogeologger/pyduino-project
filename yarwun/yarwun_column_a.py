@@ -124,7 +124,7 @@ try:
     # Moisture Sensor 1
     try:
         sensor_name = "mos1"
-        ard.write("analog,14,power,44,points,3,interval_mm,200,debug,0")
+        ard.write("analog,1,power,38,points,3,interval_mm,200,debug,0")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
@@ -148,7 +148,7 @@ try:
     # Moisture Sensor 2
     try:
         sensor_name = "mos2"
-        ard.write("analog,13,power,43,points,3,interval_mm,200,debug,0")
+        ard.write("analog,2,power,39,points,3,interval_mm,200,debug,0")
         ard.flushInput()
         msg = ard.readline()
         current_read = msg.split(',')[0:-1]
@@ -172,7 +172,7 @@ try:
     # Moisture Sensor 3
     try:
         sensor_name = "mos3"
-        ard.write("analog,11,power,41,points,3,interval_mm,200,debug,0")
+        ard.write("analog,3,power,40,points,3,interval_mm,200,debug,0")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
@@ -196,7 +196,7 @@ try:
     # Moisture Sensor 4
     try:
         sensor_name = "mos4"
-        ard.write("analog,10,power,40,points,3,interval_mm,200,debug,0")
+        ard.write("analog,4,power,41,points,3,interval_mm,200,debug,0")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
@@ -219,7 +219,7 @@ try:
     # Moisture Sensor 5
     try:
         sensor_name = "mos5"
-        ard.write("analog,12,power,42,points,3,interval_mm,200,debug,0")
+        ard.write("analog,5,power,42,points,3,interval_mm,200,debug,0")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
@@ -243,7 +243,7 @@ try:
     # Moisture Sensor 6
     try:
         sensor_name = "mos6"
-        ard.write("analog,9,power,39,points,3,interval_mm,200,debug,0")
+        ard.write("analog,6,power,43,points,3,interval_mm,200,debug,0")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
@@ -266,7 +266,7 @@ try:
     # Moisture Sensor 7
     try:
         sensor_name = "mos7"
-        ard.write("analog,8,power,38,points,3,interval_mm,200,debug,0")
+        ard.write("analog,7,power,44,points,3,interval_mm,200,debug,0")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
@@ -289,7 +289,7 @@ try:
     # Moisture Sensor 8
     try:
         sensor_name = "mos8"
-        ard.write("analog,8,power,38,points,3,interval_mm,200,debug,0")
+        ard.write("analog,8,power,45,points,3,interval_mm,200,debug,0")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
@@ -312,7 +312,7 @@ try:
     # Moisture Sensor 9
     try:
         sensor_name = "mos9"
-        ard.write("analog,8,power,38,points,3,interval_mm,200,debug,0")
+        ard.write("analog,9,power,46,points,3,interval_mm,200,debug,0")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
@@ -335,7 +335,7 @@ try:
     # Moisture Sensor 10
     try:
         sensor_name = "mos10"
-        ard.write("analog,8,power,38,points,3,interval_mm,200,debug,0")
+        ard.write("analog,10,power,47,points,3,interval_mm,200,debug,0")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
