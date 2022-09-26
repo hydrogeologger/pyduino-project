@@ -84,7 +84,10 @@ try:
         # Check if file exist to add column headings
         if not os.path.isfile(CSV_FILE_NAME):
             csv_fid = open(CSV_FILE_NAME, 'w', buffering=0) # Open file for writing
-            csv_fid.write("Timestamp,Temp (C),Humidity (%),Analog1,Analog2,Analog3,Analog4,Analog5,Analog6,Analog7,Analog8,Analog9,Analog10\r\n") # Allocate column names
+            csv_fid.write("Timestamp,Temp (C),Humidity (%),MOS1 (ADC),MOS2 (ADC),MOS3 (ADC)" \
+                        ",MOS4 (ADC),MOS5 (ADC),MOS6 (ADC),MOS7 (ADC),MOS8 (ADC),MOS9 (ADC),MOS10 (ADC)" \
+                        ",SUCT1 (C),SUCT2 (C),SUCT3 (C),SUCT4 (C),SUCT5 (C),SUCT6 (C),SUCT7 (C),SUCT8 (C)" \
+                        "\r\n") # Allocate column names
         else:
             csv_fid = open(CSV_FILE_NAME, 'a', buffering=0) # Open file for appending
         # csv_fid.write(time_now_local_str + '\r\n')
