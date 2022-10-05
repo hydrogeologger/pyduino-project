@@ -6,6 +6,8 @@ import json
 import serial
 # import subprocess
 import paho.mqtt.client as mqtt
+sys.path.append("/home/pi/pyduino/python/lib")
+import mqtthelper # MQTT helper module for publishing archive
 
 """
 This is the code for the Yarwun project.
@@ -565,61 +567,35 @@ try:
         ard.close()
 
     if (PUBLISH_TO_THINGSBOARD):
-        json_data = {"ts":seconds_since_epoch, "values": data_collected}
-        # json_data = data_collected
         try:
             # Result is in tuple (rc, mid) of MQTTMessageInfo class
-            publish_result = client.publish('v1/devices/me/telemetry', payload=json.dumps(json_data), qos=1)
-            # publish_result.wait_for_publish(timeout=1)
-            # print(publish_result.is_published())
-            # if (not publish_result.is_published()):
-            if (publish_result.rc != mqtt.MQTT_ERR_SUCCESS):
-                if SCREEN_DISPLAY:
-                    print(mqtt.error_string(publish_result.rc))
-                json_filename = "tsqueue_testbench_basin.json"
-                listObj = []
-                # Read json file
-                if (os.path.isfile(json_filename)):
-                    with open(json_filename) as json_file:
-                        listObj = json.load(json_file)
-                # Verify existing list
-                # print(listObj)
-                # print(type(listObj))
-                # print(json.dumps(listObj))
-                # print(json.dumps(listObj[0]))
-                listObj.append(json_data)
-                with open(json_filename, 'w') as json_file:
-                    json.dump(listObj, json_file, indent=4, separators=(",",": "))
+            publish_result = mqtthelper.publish_to_thingsboard(client, payload=data_collected, ts=seconds_since_epoch, display_payload=True, debug=False)
         except (ValueError, RuntimeError) as error:
             if SCREEN_DISPLAY:
                 print(error)
-        finally:
+        else:
             if SCREEN_DISPLAY:
                 print(publish_result)
-                print(json_data)
 
     if SCREEN_DISPLAY:
         print("")
 
 except KeyboardInterrupt:
-    if SAVE_TO_CSV:
-        csv_fid.write("\r\n")
+    pass
 except Exception:
     traceback.print_exc()
 
 else:
-    if SAVE_TO_CSV:
-        csv_fid.write("\r\n")
-        if not csv_fid.closed:
-            csv_fid.close()
-
     # print("begin to sleep")
     # time.sleep(SLEEP_TIME_SECONDS) # sleep to the next loop
+    pass
 
 finally:
     try:
-        if (SAVE_TO_CSV):
-            csv_fid.close()
+        if SAVE_TO_CSV:
+            csv_fid.write("\r\n")
+            if not csv_fid.closed:
+                csv_fid.close()
     except (NameError):
         pass
     if (ard.isOpen()):
