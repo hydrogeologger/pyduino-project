@@ -32,25 +32,24 @@ SERIAL_BAUD = 9600
 
 CSV_FILE_NAME = 'yarwun_column.csv'
 
-field_name = ['scale',
-            'MOIS 5',
-            'MOIS 2 ',
-            'MOIS 1 ',
-            'MOIS 3',
-            'MOIS 4',
-            'MOIS 6',
-            'MOIS 7',
-            'MOIS 8',
-            'MOIS 9',
-            'MOIS 10'
-            'Suction 1'
-            'Suction 2'
-            'Suction 3'
-            'Suction 4'
-            'Suction 5'
-            'Suction 6'
-            'Suction 7'
-            'Suction 8'
+field_name = ['mos1',
+            'mos2',
+            'mos3',
+            'mos4',
+            'mos5',
+            'mos6',
+            'mos7',
+            'mos8',
+            'mos9',
+            'mos10',
+            'suct1',
+            'suct2',
+            'suct3',
+            'suct4',
+            'suct5',
+            'suct6',
+            'suct7',
+            'suct8',
             'temp',
             'humidity']
 
@@ -84,12 +83,12 @@ try:
     if SAVE_TO_CSV:
         # Check if file exist to add column headings
         if not os.path.isfile(CSV_FILE_NAME):
-            fid = open(CSV_FILE_NAME, 'w', buffering=0) # Open file for writing
-            fid.write("Timestamp,Temp (C),Humidity (%),Analog1,Analog2,Analog3,Analog4,Analog5,Analog6,Analog7,Analog8,Analog9,Analog10\r\n") # Allocate column names
+            csv_fid = open(CSV_FILE_NAME, 'w', buffering=0) # Open file for writing
+            csv_fid.write("Timestamp,Temp (C),Humidity (%),Analog1,Analog2,Analog3,Analog4,Analog5,Analog6,Analog7,Analog8,Analog9,Analog10\r\n") # Allocate column names
         else:
-            fid = open(CSV_FILE_NAME, 'a', buffering=0) # Open file for appending
-        # fid.write(time_now_local_str + '\r\n')
-        fid.write(time_now_local_str)   # For standard csv format
+            csv_fid = open(CSV_FILE_NAME, 'a', buffering=0) # Open file for appending
+        # csv_fid.write(time_now_local_str + '\r\n')
+        csv_fid.write(time_now_local_str)   # For standard csv format
 
     if SCREEN_DISPLAY:
         print(time_now_local_str)
@@ -110,434 +109,435 @@ try:
             print(msg.rstrip())
             print("DHT22 reading failed, error: {0}".format(sys.exc_info()[0]))
         if SAVE_TO_CSV:
-            fid.write(DELIMITER + DELIMITER)
+            csv_fid.write(DELIMITER + DELIMITER)
     else:
         if SCREEN_DISPLAY:
             print("Ambient Temp (C)" + ": " + str(dht22_temp))
             print("Ambient Humdity (%): " + str(dht22_hum))
         if SAVE_TO_CSV:
-            # fid.write(time_now_local_str + DELIMITER + 'Temp' + DELIMITER + "C" + DELIMITER+DELIMITER + str(dht22_temp) + '\r\n')
-            # fid.write(time_now_local_str + DELIMITER + 'Humidity' + DELIMITER + "%" + DELIMITER+DELIMITER + str(dht22_hum) + '\r\n')
-            fid.write("{0}{1}{0}{2}".format(DELIMITER, dht22_temp, dht22_hum))
+            # csv_fid.write(time_now_local_str + DELIMITER + 'Temp' + DELIMITER + "C" + DELIMITER+DELIMITER + str(dht22_temp) + '\r\n')
+            # csv_fid.write(time_now_local_str + DELIMITER + 'Humidity' + DELIMITER + "%" + DELIMITER+DELIMITER + str(dht22_hum) + '\r\n')
+            csv_fid.write("{0}{1}{0}{2}".format(DELIMITER, dht22_temp, dht22_hum))
 
 
     #---------------------------Moisture Sensor 1--------------
+    # Moisture Sensor 1
     try:
-        sensor_name = "MOS1"
+        sensor_name = "mos1"
         ard.write("analog,14,power,44,points,3,interval_mm,200,debug,0")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
-        data_collected['MOIS 1'] = float(current_read[2])
+        data_collected['mos1'] = float(current_read[2])
     except Exception:
         if SCREEN_DISPLAY:
             print(msg.rstrip())
-            # print("{1} reading failed, error: {0}".format(sys.exc_info()[0], sensor_name))
-            print(sensor_name + " reading failed, error: " + str(sys.exc_info()[0]))
+            # print("{1} reading failed, error: {0}".format(sys.exc_info()[0], sensor_name.upper()))
+            print(sensor_name.upper() + " reading failed, error: " + str(sys.exc_info()[0]))
         if SAVE_TO_CSV:
-            fid.write(DELIMITER)
+            csv_fid.write(DELIMITER)
     else:
         if SCREEN_DISPLAY:
-            print(sensor_name + ": " + msg.rstrip())
+            print(sensor_name.upper() + ": " + msg.rstrip())
         if SAVE_TO_CSV:
-            fid.write(DELIMITER + current_read[2])
-            # fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
+            csv_fid.write(DELIMITER + current_read[2])
+            # csv_fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
 
 
     #----------------------------Moisture sensor 2---------------------------------
-    # MOIS 2
+    # Moisture Sensor 2
     try:
-        sensor_name = "MOS2"
+        sensor_name = "mos2"
         ard.write("analog,13,power,43,points,3,interval_mm,200,debug,0")
         ard.flushInput()
         msg = ard.readline()
         current_read = msg.split(',')[0:-1]
-        data_collected['MOIS 2'] = float(current_read[2])
+        data_collected['mos2'] = float(current_read[2])
     except Exception:
         if SCREEN_DISPLAY:
             print(msg.rstrip())
-            # print("{1} reading failed, error: {0}".format(sys.exc_info()[0], sensor_name))
-            print(sensor_name + " reading failed, error: " + str(sys.exc_info()[0]))
+            # print("{1} reading failed, error: {0}".format(sys.exc_info()[0], sensor_name.upper()))
+            print(sensor_name.upper() + " reading failed, error: " + str(sys.exc_info()[0]))
         if SAVE_TO_CSV:
-            fid.write(DELIMITER)
+            csv_fid.write(DELIMITER)
     else:
         if SCREEN_DISPLAY:
-            print(sensor_name + ": " + msg.rstrip())
+            print(sensor_name.upper() + ": " + msg.rstrip())
         if SAVE_TO_CSV:
-            fid.write(DELIMITER + current_read[2])
-            # fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
+            csv_fid.write(DELIMITER + current_read[2])
+            # csv_fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
 
 
     #----------------------------Moisture sensor 3---------------------------------
-    # MOIS 3
+    # Moisture Sensor 3
     try:
-        sensor_name = "MOS3"
+        sensor_name = "mos3"
         ard.write("analog,11,power,41,points,3,interval_mm,200,debug,0")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
-        data_collected['MOIS 3'] = float(current_read[2])
+        data_collected['mos3'] = float(current_read[2])
     except Exception:
         if SCREEN_DISPLAY:
             print(msg.rstrip())
-            # print("{1} reading failed, error: {0}".format(sys.exc_info()[0], sensor_name))
-            print(sensor_name + " reading failed, error: " + str(sys.exc_info()[0]))
+            # print("{1} reading failed, error: {0}".format(sys.exc_info()[0], sensor_name.upper()))
+            print(sensor_name.upper() + " reading failed, error: " + str(sys.exc_info()[0]))
         if SAVE_TO_CSV:
-            fid.write(DELIMITER)
+            csv_fid.write(DELIMITER)
     else:
         if SCREEN_DISPLAY:
-            print(sensor_name + ": " + msg.rstrip())
+            print(sensor_name.upper() + ": " + msg.rstrip())
         if SAVE_TO_CSV:
-            fid.write(DELIMITER + current_read[2])
-            # fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
+            csv_fid.write(DELIMITER + current_read[2])
+            # csv_fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
 
 
     #---------------------------Moisture Sensor 4--------------------------------
-    # MOIS 4
+    # Moisture Sensor 4
     try:
-        sensor_name = "MOS4"
+        sensor_name = "mos4"
         ard.write("analog,10,power,40,points,3,interval_mm,200,debug,0")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
-        data_collected['MOIS 4'] = float(current_read[2])
+        data_collected['mos4'] = float(current_read[2])
     except Exception:
         if SCREEN_DISPLAY:
             print(msg.rstrip())
-            # print("{1} reading failed, error: {0}".format(sys.exc_info()[0], sensor_name))
-            print(sensor_name + " reading failed, error: " + str(sys.exc_info()[0]))
+            # print("{1} reading failed, error: {0}".format(sys.exc_info()[0], sensor_name.upper()))
+            print(sensor_name.upper() + " reading failed, error: " + str(sys.exc_info()[0]))
         if SAVE_TO_CSV:
-            fid.write(DELIMITER)
+            csv_fid.write(DELIMITER)
     else:
         if SCREEN_DISPLAY:
-            print(sensor_name + ": " + msg.rstrip())
+            print(sensor_name.upper() + ": " + msg.rstrip())
         if SAVE_TO_CSV:
-            fid.write(DELIMITER + current_read[2])
-            # fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
+            csv_fid.write(DELIMITER + current_read[2])
+            # csv_fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
 
     #--------------------------Moisture Sensor 5-------------------------------
-    # MOIS 5
+    # Moisture Sensor 5
     try:
-        sensor_name = "MOS5"
+        sensor_name = "mos5"
         ard.write("analog,12,power,42,points,3,interval_mm,200,debug,0")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
-        data_collected['MOIS 5'] = float(current_read[2])
+        data_collected['mos5'] = float(current_read[2])
     except Exception:
         if SCREEN_DISPLAY:
             print(msg.rstrip())
-            # print("{1} reading failed, error: {0}".format(sys.exc_info()[0], sensor_name))
-            print(sensor_name + " reading failed, error: " + str(sys.exc_info()[0]))
+            # print("{1} reading failed, error: {0}".format(sys.exc_info()[0], sensor_name.upper()))
+            print(sensor_name.upper() + " reading failed, error: " + str(sys.exc_info()[0]))
         if SAVE_TO_CSV:
-            fid.write(DELIMITER)
+            csv_fid.write(DELIMITER)
     else:
         if SCREEN_DISPLAY:
-            print(sensor_name + ": " + msg.rstrip())
+            print(sensor_name.upper() + ": " + msg.rstrip())
         if SAVE_TO_CSV:
-            fid.write(DELIMITER + current_read[2])
-            # fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
+            csv_fid.write(DELIMITER + current_read[2])
+            # csv_fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
 
 
     #---------------------------Moisture Sensor 6--------------------------------
-    # MOIS 6
+    # Moisture Sensor 6
     try:
-        sensor_name = "MOS6"
+        sensor_name = "mos6"
         ard.write("analog,9,power,39,points,3,interval_mm,200,debug,0")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
-        data_collected['MOIS 6'] = float(current_read[2])
+        data_collected['mos6'] = float(current_read[2])
     except Exception:
         if SCREEN_DISPLAY:
             print(msg.rstrip())
-            # print("{1} reading failed, error: {0}".format(sys.exc_info()[0], sensor_name))
-            print(sensor_name + " reading failed, error: " + str(sys.exc_info()[0]))
+            # print("{1} reading failed, error: {0}".format(sys.exc_info()[0], sensor_name.upper()))
+            print(sensor_name.upper() + " reading failed, error: " + str(sys.exc_info()[0]))
         if SAVE_TO_CSV:
-            fid.write(DELIMITER)
+            csv_fid.write(DELIMITER)
     else:
         if SCREEN_DISPLAY:
-            print(sensor_name + ": " + msg.rstrip())
+            print(sensor_name.upper() + ": " + msg.rstrip())
         if SAVE_TO_CSV:
-            fid.write(DELIMITER + current_read[2])
-            # fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
+            csv_fid.write(DELIMITER + current_read[2])
+            # csv_fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
 
     #---------------------------Moisture Sensor 7--------------------------------
-    # MOIS 7
+    # Moisture Sensor 7
     try:
-        sensor_name = "MOS7"
+        sensor_name = "mos7"
         ard.write("analog,8,power,38,points,3,interval_mm,200,debug,0")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
-        data_collected['MOIS 7'] = float(current_read[2])
+        data_collected['mos7'] = float(current_read[2])
     except Exception:
         if SCREEN_DISPLAY:
             print(msg.rstrip())
-            # print("{1} reading failed, error: {0}".format(sys.exc_info()[0], sensor_name))
-            print(sensor_name + " reading failed, error: " + str(sys.exc_info()[0]))
+            # print("{1} reading failed, error: {0}".format(sys.exc_info()[0], sensor_name.upper()))
+            print(sensor_name.upper() + " reading failed, error: " + str(sys.exc_info()[0]))
         if SAVE_TO_CSV:
-            fid.write(DELIMITER)
+            csv_fid.write(DELIMITER)
     else:
         if SCREEN_DISPLAY:
-            print(sensor_name + ": " + msg.rstrip())
+            print(sensor_name.upper() + ": " + msg.rstrip())
         if SAVE_TO_CSV:
-            fid.write(DELIMITER + current_read[2])
-            # fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
+            csv_fid.write(DELIMITER + current_read[2])
+            # csv_fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
 
     #---------------------------Moisture Sensor 8--------------------------------
-    # MOIS 8
+    # Moisture Sensor 8
     try:
-        sensor_name = "MOS8"
+        sensor_name = "mos8"
         ard.write("analog,8,power,38,points,3,interval_mm,200,debug,0")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
-        data_collected['MOIS 8'] = float(current_read[2])
+        data_collected['mos8'] = float(current_read[2])
     except Exception:
         if SCREEN_DISPLAY:
             print(msg.rstrip())
-            # print("{1} reading failed, error: {0}".format(sys.exc_info()[0], sensor_name))
-            print(sensor_name + " reading failed, error: " + str(sys.exc_info()[0]))
+            # print("{1} reading failed, error: {0}".format(sys.exc_info()[0], sensor_name.upper()))
+            print(sensor_name.upper() + " reading failed, error: " + str(sys.exc_info()[0]))
         if SAVE_TO_CSV:
-            fid.write(DELIMITER)
+            csv_fid.write(DELIMITER)
     else:
         if SCREEN_DISPLAY:
-            print(sensor_name + ": " + msg.rstrip())
+            print(sensor_name.upper() + ": " + msg.rstrip())
         if SAVE_TO_CSV:
-            fid.write(DELIMITER + current_read[2])
-            # fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
+            csv_fid.write(DELIMITER + current_read[2])
+            # csv_fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
 
     #---------------------------Moisture Sensor 9--------------------------------
-    # MOIS 9
+    # Moisture Sensor 9
     try:
-        sensor_name = "MOS9"
+        sensor_name = "mos9"
         ard.write("analog,8,power,38,points,3,interval_mm,200,debug,0")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
-        data_collected['MOIS 9'] = float(current_read[2])
+        data_collected['mos9'] = float(current_read[2])
     except Exception:
         if SCREEN_DISPLAY:
             print(msg.rstrip())
-            # print("{1} reading failed, error: {0}".format(sys.exc_info()[0], sensor_name))
-            print(sensor_name + " reading failed, error: " + str(sys.exc_info()[0]))
+            # print("{1} reading failed, error: {0}".format(sys.exc_info()[0], sensor_name.upper()))
+            print(sensor_name.upper() + " reading failed, error: " + str(sys.exc_info()[0]))
         if SAVE_TO_CSV:
-            fid.write(DELIMITER)
+            csv_fid.write(DELIMITER)
     else:
         if SCREEN_DISPLAY:
-            print(sensor_name + ": " + msg.rstrip())
+            print(sensor_name.upper() + ": " + msg.rstrip())
         if SAVE_TO_CSV:
-            fid.write(DELIMITER + current_read[2])
-            # fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
+            csv_fid.write(DELIMITER + current_read[2])
+            # csv_fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
 
     #---------------------------Moisture Sensor 10--------------------------------
-    # MOIS 10
+    # Moisture Sensor 10
     try:
-        sensor_name = "MOS10"
+        sensor_name = "mos10"
         ard.write("analog,8,power,38,points,3,interval_mm,200,debug,0")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
-        data_collected['MOIS 10'] = float(current_read[2])
+        data_collected['mos10'] = float(current_read[2])
     except Exception:
         if SCREEN_DISPLAY:
             print(msg.rstrip())
-            # print("{1} reading failed, error: {0}".format(sys.exc_info()[0], sensor_name))
-            print(sensor_name + " reading failed, error: " + str(sys.exc_info()[0]))
+            # print("{1} reading failed, error: {0}".format(sys.exc_info()[0], sensor_name.upper()))
+            print(sensor_name.upper() + " reading failed, error: " + str(sys.exc_info()[0]))
         if SAVE_TO_CSV:
-            fid.write(DELIMITER)
+            csv_fid.write(DELIMITER)
     else:
         if SCREEN_DISPLAY:
-            print(sensor_name + ": " + msg.rstrip())
+            print(sensor_name.upper() + ": " + msg.rstrip())
         if SAVE_TO_CSV:
-            fid.write(DELIMITER + current_read[2])
-            # fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
+            csv_fid.write(DELIMITER + current_read[2])
+            # csv_fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
 
 
     #---------------------------Suction Sensor 1--------------------------------
-    # Suction 1
+    # Suction Sensor 1
     try:
-        sensor_name = "SUC1"
+        sensor_name = "suct1"
         ard.write("fred,286BD0CF0C000063,dgin,52,snpw,49,htpw,48,itv,1000,otno,5,debug,1")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
-        data_collected['Suction 1'] = float(current_read[2])
+        data_collected['suct1'] = float(current_read[2])
     except Exception:
         if SCREEN_DISPLAY:
             print(msg.rstrip())
-            # print("{1} reading failed, error: {0}".format(sys.exc_info()[0], sensor_name))
-            print(sensor_name + " reading failed, error: " + str(sys.exc_info()[0]))
+            # print("{1} reading failed, error: {0}".format(sys.exc_info()[0], sensor_name.upper()))
+            print(sensor_name.upper() + " reading failed, error: " + str(sys.exc_info()[0]))
         if SAVE_TO_CSV:
-            fid.write(DELIMITER)
+            csv_fid.write(DELIMITER)
     else:
         if SCREEN_DISPLAY:
-            print(sensor_name + ": " + msg.rstrip())
+            print(sensor_name.upper() + ": " + msg.rstrip())
         if SAVE_TO_CSV:
-            fid.write(DELIMITER + current_read[2])
-            # fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
+            csv_fid.write(DELIMITER + current_read[2])
+            # csv_fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
 
     #---------------------------Suction Sensor 2--------------------------------
-    # Suction 2
+    # Suction Sensor 2
     try:
-        sensor_name = "SUC2"
+        sensor_name = "suct2"
         ard.write("fred,285CABCF0C000016,dgin,52,snpw,49,htpw,48,itv,1000,otno,5,debug,1")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
-        data_collected['Suction 2'] = float(current_read[2])
+        data_collected['suct2'] = float(current_read[2])
     except Exception:
         if SCREEN_DISPLAY:
             print(msg.rstrip())
-            # print("{1} reading failed, error: {0}".format(sys.exc_info()[0], sensor_name))
-            print(sensor_name + " reading failed, error: " + str(sys.exc_info()[0]))
+            # print("{1} reading failed, error: {0}".format(sys.exc_info()[0], sensor_name.upper()))
+            print(sensor_name.upper() + " reading failed, error: " + str(sys.exc_info()[0]))
         if SAVE_TO_CSV:
-            fid.write(DELIMITER)
+            csv_fid.write(DELIMITER)
     else:
         if SCREEN_DISPLAY:
-            print(sensor_name + ": " + msg.rstrip())
+            print(sensor_name.upper() + ": " + msg.rstrip())
         if SAVE_TO_CSV:
-            fid.write(DELIMITER + current_read[2])
-            # fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
+            csv_fid.write(DELIMITER + current_read[2])
+            # csv_fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
 
     #---------------------------Suction Sensor 3--------------------------------
-    # Suction 3
+    # Suction Sensor 3
     try:
-        sensor_name = "SUC3"
+        sensor_name = "suct3"
         ard.write("fred,2864D0CF0C000047,dgin,52,snpw,49,htpw,48,itv,1000,otno,5,debug,1")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
-        data_collected['Suction 3'] = float(current_read[2])
+        data_collected['suct3'] = float(current_read[2])
     except Exception:
         if SCREEN_DISPLAY:
             print(msg.rstrip())
-            # print("{1} reading failed, error: {0}".format(sys.exc_info()[0], sensor_name))
-            print(sensor_name + " reading failed, error: " + str(sys.exc_info()[0]))
+            # print("{1} reading failed, error: {0}".format(sys.exc_info()[0], sensor_name.upper()))
+            print(sensor_name.upper() + " reading failed, error: " + str(sys.exc_info()[0]))
         if SAVE_TO_CSV:
-            fid.write(DELIMITER)
+            csv_fid.write(DELIMITER)
     else:
         if SCREEN_DISPLAY:
-            print(sensor_name + ": " + msg.rstrip())
+            print(sensor_name.upper() + ": " + msg.rstrip())
         if SAVE_TO_CSV:
-            fid.write(DELIMITER + current_read[2])
-            # fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
+            csv_fid.write(DELIMITER + current_read[2])
+            # csv_fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
 
     #---------------------------Suction Sensor 4--------------------------------
-    # Suction 4
+    # Suction Sensor 4
     try:
-        sensor_name = "SUC4"
+        sensor_name = "suct4"
         ard.write("fred,2859ABCF0C0000FD,dgin,52,snpw,49,htpw,48,itv,1000,otno,5,debug,1")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
-        data_collected['Suction 4'] = float(current_read[2])
+        data_collected['suct4'] = float(current_read[2])
     except Exception:
         if SCREEN_DISPLAY:
             print(msg.rstrip())
-            # print("{1} reading failed, error: {0}".format(sys.exc_info()[0], sensor_name))
-            print(sensor_name + " reading failed, error: " + str(sys.exc_info()[0]))
+            # print("{1} reading failed, error: {0}".format(sys.exc_info()[0], sensor_name.upper()))
+            print(sensor_name.upper() + " reading failed, error: " + str(sys.exc_info()[0]))
         if SAVE_TO_CSV:
-            fid.write(DELIMITER)
+            csv_fid.write(DELIMITER)
     else:
         if SCREEN_DISPLAY:
-            print(sensor_name + ": " + msg.rstrip())
+            print(sensor_name.upper() + ": " + msg.rstrip())
         if SAVE_TO_CSV:
-            fid.write(DELIMITER + current_read[2])
-            # fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
+            csv_fid.write(DELIMITER + current_read[2])
+            # csv_fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
 
     #---------------------------Suction Sensor 5--------------------------------
-    # Suction 5
+    # Suction Sensor 5
     try:
-        sensor_name = "SUC5"
+        sensor_name = "suct5"
         ard.write("fred,28214B330E000032,dgin,52,snpw,49,htpw,48,itv,1000,otno,5,debug,1")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
-        data_collected['Suction 5'] = float(current_read[2])
+        data_collected['suct5'] = float(current_read[2])
     except Exception:
         if SCREEN_DISPLAY:
             print(msg.rstrip())
-            # print("{1} reading failed, error: {0}".format(sys.exc_info()[0], sensor_name))
-            print(sensor_name + " reading failed, error: " + str(sys.exc_info()[0]))
+            # print("{1} reading failed, error: {0}".format(sys.exc_info()[0], sensor_name.upper()))
+            print(sensor_name.upper() + " reading failed, error: " + str(sys.exc_info()[0]))
         if SAVE_TO_CSV:
-            fid.write(DELIMITER)
+            csv_fid.write(DELIMITER)
     else:
         if SCREEN_DISPLAY:
-            print(sensor_name + ": " + msg.rstrip())
+            print(sensor_name.upper() + ": " + msg.rstrip())
         if SAVE_TO_CSV:
-            fid.write(DELIMITER + current_read[2])
-            # fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
+            csv_fid.write(DELIMITER + current_read[2])
+            # csv_fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
 
     #---------------------------Suction Sensor 6--------------------------------
-    # Suction 6
+    # Suction Sensor 6
     try:
-        sensor_name = "SUC6"
+        sensor_name = "suct6"
         ard.write("fred,2804D0CF0C000084,dgin,52,snpw,49,htpw,48,itv,1000,otno,5,debug,1")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
-        data_collected['Suction 6'] = float(current_read[2])
+        data_collected['suct6'] = float(current_read[2])
     except Exception:
         if SCREEN_DISPLAY:
             print(msg.rstrip())
-            # print("{1} reading failed, error: {0}".format(sys.exc_info()[0], sensor_name))
-            print(sensor_name + " reading failed, error: " + str(sys.exc_info()[0]))
+            # print("{1} reading failed, error: {0}".format(sys.exc_info()[0], sensor_name.upper()))
+            print(sensor_name.upper() + " reading failed, error: " + str(sys.exc_info()[0]))
         if SAVE_TO_CSV:
-            fid.write(DELIMITER)
+            csv_fid.write(DELIMITER)
     else:
         if SCREEN_DISPLAY:
-            print(sensor_name + ": " + msg.rstrip())
+            print(sensor_name.upper() + ": " + msg.rstrip())
         if SAVE_TO_CSV:
-            fid.write(DELIMITER + current_read[2])
-            # fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
+            csv_fid.write(DELIMITER + current_read[2])
+            # csv_fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
 
     #---------------------------Suction Sensor 7--------------------------------
-    # Suction 7
+    # Suction Sensor 7
     try:
-        sensor_name = "SUC7"
+        sensor_name = "suct7"
         ard.write("fred,288CABCF0C0000D2,dgin,52,snpw,49,htpw,48,itv,1000,otno,5,debug,1")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
-        data_collected['Suction 7'] = float(current_read[2])
+        data_collected['suct7'] = float(current_read[2])
     except Exception:
         if SCREEN_DISPLAY:
             print(msg.rstrip())
-            # print("{1} reading failed, error: {0}".format(sys.exc_info()[0], sensor_name))
-            print(sensor_name + " reading failed, error: " + str(sys.exc_info()[0]))
+            # print("{1} reading failed, error: {0}".format(sys.exc_info()[0], sensor_name.upper()))
+            print(sensor_name.upper() + " reading failed, error: " + str(sys.exc_info()[0]))
         if SAVE_TO_CSV:
-            fid.write(DELIMITER)
+            csv_fid.write(DELIMITER)
     else:
         if SCREEN_DISPLAY:
-            print(sensor_name + ": " + msg.rstrip())
+            print(sensor_name.upper() + ": " + msg.rstrip())
         if SAVE_TO_CSV:
-            fid.write(DELIMITER + current_read[2])
-            # fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
+            csv_fid.write(DELIMITER + current_read[2])
+            # csv_fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
 
     #---------------------------Suction Sensor 8--------------------------------
-    # Suction 8
+    # Suction Sensor 8
     try:
-        sensor_name = "SUC8"
+        sensor_name = "suct8"
         ard.write("fred,283204D00C000038,dgin,52,snpw,49,htpw,48,itv,1000,otno,5,debug,1")
         ard.flushInput()
         msg = ard.readline()
         current_read=msg.split(',')[0:-1]
-        data_collected['Suction 8'] = float(current_read[2])
+        data_collected['suct8'] = float(current_read[2])
     except Exception:
         if SCREEN_DISPLAY:
             print(msg.rstrip())
-            # print("{1} reading failed, error: {0}".format(sys.exc_info()[0], sensor_name))
-            print(sensor_name + " reading failed, error: " + str(sys.exc_info()[0]))
+            # print("{1} reading failed, error: {0}".format(sys.exc_info()[0], sensor_name.upper()))
+            print(sensor_name.upper() + " reading failed, error: " + str(sys.exc_info()[0]))
         if SAVE_TO_CSV:
-            fid.write(DELIMITER)
+            csv_fid.write(DELIMITER)
     else:
         if SCREEN_DISPLAY:
-            print(sensor_name + ": " + msg.rstrip())
+            print(sensor_name.upper() + ": " + msg.rstrip())
         if SAVE_TO_CSV:
-            fid.write(DELIMITER + current_read[2])
-            # fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
+            csv_fid.write(DELIMITER + current_read[2])
+            # csv_fid.write(time_now_local_str + DELIMITER + field_name[field_name_id] + DELIMITER + msg.rstrip() + '\r\n')
 
 
 
@@ -582,24 +582,25 @@ try:
     if SCREEN_DISPLAY:
         print("")
 
+except KeyboardInterrupt:
     if SAVE_TO_CSV:
-        fid.write("\r\n")
-        if not fid.closed:
-            fid.close()
+        csv_fid.write("\r\n")
+except Exception:
+    traceback.print_exc()
+
+else:
+    if SAVE_TO_CSV:
+        csv_fid.write("\r\n")
+        if not csv_fid.closed:
+            csv_fid.close()
 
     # print("begin to sleep")
     # time.sleep(SLEEP_TIME_SECONDS) # sleep to the next loop
 
-
-except KeyboardInterrupt:
-    pass
-except Exception:
-    traceback.print_exc()
-
 finally:
     try:
         if (SAVE_TO_CSV):
-            fid.close()
+            csv_fid.close()
     except (NameError):
         pass
     if (ard.isOpen()):
