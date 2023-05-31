@@ -4,7 +4,6 @@ import sys
 import traceback
 import time
 import json
-import serial
 # import subprocess
 import RPi.GPIO as GPIO
 import paho.mqtt.client as mqtt
@@ -17,7 +16,7 @@ import mqtthelper # MQTT helper module for publishing archive
 This is the code for the Phosphate Hill Rehabilitation Cover Project.
 Weather Station, but this file only captures rain and windspeed
 The peripherals include:
-    1x Camera
+    Up to 2x Camera
     1x UV Sensor
     1x Wind Anemometer
     1x Rain Gauge (Tip Bucket)
@@ -25,7 +24,7 @@ The peripherals include:
     2x Strings of Sensors per Station.
         Per String:
         4x Teros 12 Moisture Sensors
-        4x Suction Sensors
+        6x Suction Sensors
         2x Oxygen Sensors
 """
 #------------------- Constants and Ports Information---------------------------
@@ -43,14 +42,15 @@ SERIAL_BAUD = 9600
 
 #---------------------- Configuration -------------------------
 
-CSV_FILE_NAME = 'phosphate_hill-1-rain-wind.csv'
+CSV_FILE_NAME = 'phosphate_hill-1-rain-winddir.csv'
 
 # TODO: check field_names and suction sensor addresses
 field_name = ["rain",
             "wind_speed"
             ]
 
-data_collected = dict((el,0.0) for el in field_name)
+# data_collected = dict((el,0.0) for el in field_name)
+data_collected = {}
 
 #---------------------------- Initiation --------------------------------------
 if (PUBLISH_TO_THINGSBOARD):
@@ -63,7 +63,7 @@ if (PUBLISH_TO_THINGSBOARD):
         # Please use unique client_id for each client, and you should be able to use
         # same thingsboard device token for multiple clients.
         client = mqtt.Client(client_id="phosphatehill_wind_rain")
-        client.username_pw_set(credential['access_token_phosphate_hill'])
+        client.username_pw_set(credential['access_token_phosphatehill_1_rain_windir'])
         client.connect(credential['thingsboard_host'], 1883, 60)
         client.loop_start()
     except Exception:
