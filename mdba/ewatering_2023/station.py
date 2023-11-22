@@ -103,9 +103,10 @@ if (PUBLISH_TO_THINGSBOARD):
         client.username_pw_set(credential['mdba_ewatering_2023'])
         client.connect(credential['thingsboard_host'], 1883, 60)
         client.loop_start()
-    except Exception:
-        print("Failed to connect to thingsboard")
+    except Exception as error:
+        print("Failed to connect to thingsboard. {0} {1}".format(type(error), error))
         # time.sleep(30)
+
 
 try:
     while True:
@@ -388,6 +389,22 @@ try:
                 csv_fid.write("{0}{1}".format(DELIMITER, wind_direction_degree))
         finally:
             pass
+
+
+        #------------------------ WEIRD WORK AROUND FOR MOS --------------------
+        # pylint: disable-next=pointless-string-statement
+        """
+        observed that when aqua troll 200 was turned on, moisture sensor ec
+        does not provide any readings.
+        work around was to turn off aqua troll temporariliy while making mos readings.
+        Fixed: on 2023-11-20
+        """
+        ard.flushInput()
+        ard.write("power_switch,13,power_switch_status,1")  # do measurement
+        msg = ard.readline()
+        if SCREEN_DISPLAY:
+            print(msg.rstrip())
+        time.sleep(3)
 
 
         #---------------------------Moisture Sensor 1--------------
@@ -702,14 +719,21 @@ try:
 
 
         #------------------------aqua troll 200 for sa1-----------------------------
+        ard.flushInput()
+        ard.write("power_switch,13,power_switch_status,0")  # do measurement
+        msg = ard.readline()
+        if SCREEN_DISPLAY:
+            print(msg.rstrip())
+        time.sleep(3)
+
         try:
             sensor_name = "aquatroll_sa1"
             ard.flushInput()
             ard.write("SDI-12,68,custom_cmd,aM!,debug,0")  # do measurement
             msg = ard.readline() # a0013
 
-            if SCREEN_DISPLAY:
-                print(sensor_name.upper() + ": " + msg.rstrip())
+            # if SCREEN_DISPLAY:
+            #     print(sensor_name.upper() + ": " + msg.rstrip())
 
             time.sleep(3) # this appears to be important
 
