@@ -5,6 +5,7 @@ import traceback
 import time
 import json
 import serial
+import RPi.GPIO as GPIO
 # import subprocess
 import paho.mqtt.client as mqtt
 import mqtthelper # MQTT helper module for publishing archive
@@ -64,23 +65,39 @@ if (PUBLISH_TO_THINGSBOARD):
     with open('/home/pi/pyduino/credential/thingsboard.json') as f:
         credential = json.load(f)
 
-    try:
-        # You can publish without starting a loop but failed publishes cannot be
-        # accurately tracked.
-        # Please use unique client_id for each client, and you should be able to use
-        # same thingsboard device token for multiple clients.
-        client = mqtt.Client(client_id="savage_#")
-        client.username_pw_set(credential['access_token_savage#'])
-        client.connect(credential['thingsboard_host'], 1883, 60)
-        client.loop_start()
-    except Exception:
-        print("Failed to connect to thingsboard")
-        # time.sleep(30)
+#     try:
+#         # You can publish without starting a loop but failed publishes cannot be
+#         # accurately tracked.
+#         # Please use unique client_id for each client, and you should be able to use
+#         # same thingsboard device token for multiple clients.
+#         client = mqtt.Client(client_id="savage_#")
+#         client.username_pw_set(credential['access_token_savage#'])
+#         client.connect(credential['thingsboard_host'], 1883, 60)
+#         client.loop_start()
+#     except Exception:
+#         print("Failed to connect to thingsboard")
+#         # time.sleep(30)
 
 try:
     # while True:
     ard = serial.Serial(port=SERIAL_PORT, baudrate=SERIAL_BAUD, timeout=30)
     # time.sleep(3)
+
+    # --------------------------------- Serial Test ------------------------------
+    # Test serial connection if failed then reset arduino
+    ard.flushInput()
+    command = "abc"
+    ard.write(command.encode())
+    msg = ard.readline().decode()
+    if msg != "abc\r\n":
+        print("Failed Handshake: No Response, resetting mcu")
+        GPIO.setmode(GPIO.BCM)
+        RPI_RESET_PIN = 27  #GPIO/BCM pin number to reset arduino
+        GPIO.setup(RPI_RESET_PIN, GPIO.OUT)
+        GPIO.output(RPI_RESET_PIN, GPIO.LOW)
+        time.sleep(2) # Hold reset line for x seconds
+        GPIO.cleanup(RPI_RESET_PIN)
+        time.sleep(5) # give arduino time to configure it self
 
     time_now = time.time()
     time_now_local = time.localtime(time_now)
@@ -512,6 +529,19 @@ try:
 
     if (PUBLISH_TO_THINGSBOARD):
         try:
+            # You can publish without starting a loop but failed publishes cannot be
+            # accurately tracked.
+            # Please use unique client_id for each client, and you should be able to use
+            # same thingsboard device token for multiple clients.
+            client = mqtt.Client(client_id="savage_#")
+            client.username_pw_set(credential['access_token_savage#'])
+            client.connect(credential['thingsboard_host'], 1883, 60)
+            client.loop_start()
+        except Exception:
+            print("Failed to connect to thingsboard")
+            # time.sleep(30)
+
+        try:
             # Result is in tuple (rc, mid) of MQTTMessageInfo class
             publish_result = mqtthelper.publish_to_thingsboard(client, payload=data_collected, ts=seconds_since_epoch, display_payload=True, debug=False)
         except (ValueError, RuntimeError) as error:
@@ -535,6 +565,11 @@ else:
     pass
 
 finally:
+    # try:
+    #     GPIO.setwarnings(False)
+    #     GPIO.cleanup()
+    # except NameError:
+    #     pass
     try:
         if SAVE_TO_CSV:
             csv_fid.write("\r\n")
